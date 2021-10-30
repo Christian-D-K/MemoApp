@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 
 import AppBar from '../components/AppBar';
@@ -20,7 +21,9 @@ export default function LogInScreen() {
         <Button label="sing up!" />
         <View style={styles.footer}>
           <Text style={styles.footerText}>Already register?</Text>
-          <Text style={styles.footerLink}>Log In.</Text>
+          <TouchableOpacity>
+            <Text style={styles.footerLink}>Log In.</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
