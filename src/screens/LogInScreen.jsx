@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -11,12 +11,36 @@ import Button from '../components/Button';
 
 export default function LogInScreen(props) {
   const { navigation } = props;
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   return (
     <View style={styles.container}>
       <View style={styles.inner}>
         <Text style={styles.title}>Log In</Text>
-        <TextInput style={styles.input} value="Email" />
-        <TextInput style={styles.input} value="Pass" />
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={(text) => { setEmail(text); }}
+          // 頭文字を小文字にする（デフォルトは大文字が入る）
+          autoCapitalize="none"
+          // 端末のキーボードタイプを指定する
+          keyboardType="email-address"
+          // ユーザが入力するまで薄く文字が表示され、ナビゲーションする
+          placeholder="Email Address"
+          // iOSキーチェーンを有効にする
+          textContentType="emailAddress"
+        />
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={(text) => { setPassword(text); }}
+          autoCapitalize="none"
+          placeholder="Password"
+          // パスワードマスク（falseに指定することで表示)
+          secureTextEntry
+          // iOSキーチェーンを有効にする
+          textContentType="password"
+        />
         <Button
           label="submit"
           onPress={() => {
