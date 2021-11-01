@@ -5,7 +5,10 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
+// ファイアーベース読み込み
+import firebase from 'firebase';
 
 import Button from '../components/Button';
 
@@ -13,6 +16,26 @@ export default function LogInScreen(props) {
   const { navigation } = props;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // 会員登録処理を外だし
+  function handlePress() {
+    // ファイアーベースのユーザ作成API
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      // ユーザ作成が成功した場合の処理
+      .then((userCredential) => {
+        const { user } = userCredential;
+        console.log(user.uid);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MemoList' }],
+        });
+      })
+      // ユーザ作成が失敗した場合の処理
+      .catch((error) => {
+        Alert.alert(error.code);
+      });
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.inner}>
@@ -43,12 +66,7 @@ export default function LogInScreen(props) {
         />
         <Button
           label="Sing Up!"
-          onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'MemoList' }],
-            });
-          }}
+          onPress={handlePress}
         />
         <View style={styles.footer}>
           <Text style={styles.footerText}>Already register?</Text>
