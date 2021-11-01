@@ -12,6 +12,9 @@ import MemoCreateScreen from './src/screens/MemoCreateScreen';
 
 import { firebaseConfig } from './env';
 
+// firestore(GCP cloud database)に接続を有効化
+require('firebase/firestore');
+
 const Stack = createStackNavigator();
 
 if (firebase.apps.length === 0) {
