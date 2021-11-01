@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,26 @@ export default function LogInScreen(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  function handlePress() {
+  // 画面の表示時に一度だけ実行される処理
+  useEffect(() => {
+    // ユーザがログインしているか監視するメソッド
+    // 帰り値として、このメソッドを停止するメソッドを返す
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      // 一度ログインしている場合
+      if (user) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MemoList' }],
+        });
+      }
+    });
+    // useEffectの標準機能として、returnされたメソッドを画面が消えたタイミングで実行する
+    // 結果としてログイン監視のメソッドを停止してくれる
+    // アンマウントと呼ばれる
+    return unsubscribe;
+  }, []);
+
+  const handlePress = () => {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const { user } = userCredential;
@@ -30,7 +49,7 @@ export default function LogInScreen(props) {
         console.log(error.code);
         Alert.alert(error.code);
       });
-  }
+  };
 
   return (
     <View style={styles.container}>

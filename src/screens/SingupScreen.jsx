@@ -18,7 +18,7 @@ export default function LogInScreen(props) {
   const [password, setPassword] = useState('');
 
   // 会員登録処理を外だし
-  function handlePress() {
+  const handlePress = () => {
     // ファイアーベースのユーザ作成API
     firebase.auth().createUserWithEmailAndPassword(email, password)
       // ユーザ作成が成功した場合の処理
@@ -34,7 +34,7 @@ export default function LogInScreen(props) {
       .catch((error) => {
         Alert.alert(error.code);
       });
-  }
+  };
 
   return (
     <View style={styles.container}>
