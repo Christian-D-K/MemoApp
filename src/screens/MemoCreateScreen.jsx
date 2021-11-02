@@ -31,6 +31,7 @@ export default function MemoCreatecreen(props) {
       // 参照先(document)の諸データが「docRefに格納されてくる」
       .then((docRef) => {
         console.log(docRef.id);
+        // 端末標準の戻るボタンを表示
         navigation.goBack();
       })
       .catch((error) => {

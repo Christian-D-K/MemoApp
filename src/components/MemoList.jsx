@@ -20,6 +20,7 @@ import {
   arrayOf,
 } from 'prop-types';
 
+// Date型のフォーマッター
 import { dateToString } from '../utils';
 
 export default function MemoList(props) {
@@ -41,6 +42,7 @@ export default function MemoList(props) {
         >
           {item.bodyText}
         </Text>
+        {/* 最終更新日付をフォーマットして表示 */}
         <Text style={styles.memoListItemDate}>{dateToString(item.updatedAt)}</Text>
       </View>
       <TouchableOpacity

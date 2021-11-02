@@ -43,6 +43,7 @@ export default function MemoDetailScreen(props) {
   return (
     <View style={styles.container}>
       <View style={styles.memoHeader}>
+        {/* タイトルだけ表示するために、ライン指定 */}
         <Text style={styles.memoTitle} numberOfLines={1}>{memo && memo.bodyText}</Text>
         <Text style={styles.memoDate}>{memo && dateToString(memo.updatedAt)}</Text>
       </View>
@@ -54,7 +55,7 @@ export default function MemoDetailScreen(props) {
       <CircleButton
         style={{ top: 60, bottom: 'auto' }}
         name="edit-2"
-        onPress={() => { navigation.navigate('MemoEdit'); }}
+        onPress={() => { navigation.navigate('MemoEdit', { id: memo.id, bodyText: memo.bodyText }); }}
       />
     </View>
   );

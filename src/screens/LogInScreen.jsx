@@ -36,7 +36,9 @@ export default function LogInScreen(props) {
   }, []);
 
   const handlePress = () => {
+    // ログインメソッド(EmailとPassword)
     firebase.auth().signInWithEmailAndPassword(email, password)
+      // ログイン成功
       .then((userCredential) => {
         const { user } = userCredential;
         console.log(user.uid);
@@ -45,6 +47,7 @@ export default function LogInScreen(props) {
           routes: [{ name: 'MemoList' }],
         });
       })
+      // ログイン失敗
       .catch((error) => {
         console.log(error.code);
         Alert.alert(error.code);
