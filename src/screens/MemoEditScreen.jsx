@@ -10,15 +10,19 @@ import firebase from 'firebase';
 
 import CircleButton from '../components/CircleButton';
 import KeyboardSafeView from '../components/KeyboardSafeView';
+import Loading from '../components/Loading';
+import { transLateErrors } from '../utils';
 
 export default function MemoEditScreen(props) {
   const { navigation, route } = props;
   const { id, bodyText } = route.params;
   const [body, setBody] = useState(bodyText);
+  const [isLoading, setLoading] = useState(false);
 
   const handlePress = () => {
     const { currentUser } = firebase.auth();
     if (currentUser) {
+      setLoading(true);
       const db = firebase.firestore();
       // アップデート処理
       // 書き込むデータを特定する
@@ -28,18 +32,23 @@ export default function MemoEditScreen(props) {
       ref.set({
         bodyText: body,
         updatedAt: new Date(),
-      }, { marge: true })
+      }, { merge: true })
         .then(() => {
           navigation.goBack();
         })
         .catch((error) => {
-          Alert.alert(error.code);
+          const errorMsg = transLateErrors(error.code);
+          Alert.alert(errorMsg.title, errorMsg.description);
+        })
+        .then(() => {
+          setLoading(false);
         });
     }
   };
 
   return (
     <KeyboardSafeView style={styles.container}>
+      <Loading isLoading={isLoading} />
       <View style={styles.inputContainer}>
         <TextInput
           value={body}

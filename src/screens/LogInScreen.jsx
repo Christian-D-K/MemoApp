@@ -10,11 +10,14 @@ import {
 import firebase from 'firebase';
 
 import Button from '../components/Button';
+import Loading from '../components/Loading';
+import { transLateErrors } from '../utils';
 
 export default function LogInScreen(props) {
   const { navigation } = props;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setLoading] = useState(true);
 
   // 画面の表示時に一度だけ実行される処理
   useEffect(() => {
@@ -27,6 +30,8 @@ export default function LogInScreen(props) {
           index: 0,
           routes: [{ name: 'MemoList' }],
         });
+      } else {
+        setLoading(false);
       }
     });
     // useEffectの標準機能として、returnされたメソッドを画面が消えたタイミングで実行する
@@ -36,12 +41,11 @@ export default function LogInScreen(props) {
   }, []);
 
   const handlePress = () => {
+    setLoading(true);
     // ログインメソッド(EmailとPassword)
     firebase.auth().signInWithEmailAndPassword(email, password)
       // ログイン成功
-      .then((userCredential) => {
-        const { user } = userCredential;
-        console.log(user.uid);
+      .then(() => {
         navigation.reset({
           index: 0,
           routes: [{ name: 'MemoList' }],
@@ -49,13 +53,18 @@ export default function LogInScreen(props) {
       })
       // ログイン失敗
       .catch((error) => {
-        console.log(error.code);
-        Alert.alert(error.code);
+        const errorMsg = transLateErrors(error.code);
+        Alert.alert(errorMsg.title, errorMsg.description);
+      })
+      // どちらの場合も
+      .then(() => {
+        setLoading(false);
       });
   };
 
   return (
     <View style={styles.container}>
+      <Loading isLoading={isLoading} />
       <View style={styles.inner}>
         <Text style={styles.title}>Log In</Text>
         <TextInput

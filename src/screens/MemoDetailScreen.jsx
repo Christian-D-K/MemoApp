@@ -28,7 +28,6 @@ export default function MemoDetailScreen(props) {
       const ref = db.collection(`users/${currentUser.uid}/memos`).doc(id);
       // 複数のドキュメントを取得するケースではsnapshotという形で受け取るが、今回は一件のみなので、docでOK
       unsubscribe = ref.onSnapshot((doc) => {
-        console.log(doc.id, doc.data());
         const data = doc.data();
         setMemo({
           id: doc.id,

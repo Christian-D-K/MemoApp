@@ -3,19 +3,23 @@ import {
   View,
   TextInput,
   StyleSheet,
-  Keyboard,
+  Alert,
+  // Keyboard,
 } from 'react-native';
 
 import firebase from 'firebase';
 
 import CircleButton from '../components/CircleButton';
 import KeyboardSafeView from '../components/KeyboardSafeView';
+import Loading from '../components/Loading';
 
 export default function MemoCreatecreen(props) {
   const { navigation } = props;
   const [bodyText, setBodyText] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
   const handlePress = () => {
+    setLoading(true);
     // ログイン中のユーザ情報を取得
     const { currentUser } = firebase.auth();
     // DB接続
@@ -29,18 +33,21 @@ export default function MemoCreatecreen(props) {
       updatedAt: new Date(),
     })
       // 参照先(document)の諸データが「docRefに格納されてくる」
-      .then((docRef) => {
-        console.log(docRef.id);
+      .then(() => {
         // 端末標準の戻るボタンを表示
         navigation.goBack();
       })
       .catch((error) => {
-        console.log('Error!', error);
+        Alert.alert('メモの作成に失敗しました ¥n', error.code);
+      })
+      .then(() => {
+        setLoading(false);
       });
   };
 
   return (
     <KeyboardSafeView style={styles.container}>
+      <Loading isLoading={isLoading} />
       <View style={styles.inputContainer}>
         <TextInput
           value={bodyText}
@@ -49,7 +56,7 @@ export default function MemoCreatecreen(props) {
           style={styles.input}
           // returnキーを押すとキーボードが閉じる
           // （複数行テキスト、multiline)が設定されているとゴミ機能になるので注意
-          onSubmitEditing={Keyboard.dismiss}
+          // onSubmitEditing={Keyboard.dismiss}
           onChangeText={(text) => { setBodyText(text); }}
           // 勝手にキーボードが出てくる
           // falseに設定した場合、テキストフォールドのタップで登場

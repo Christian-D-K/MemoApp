@@ -19,6 +19,7 @@ import {
   instanceOf,
   arrayOf,
 } from 'prop-types';
+import firebase from 'firebase';
 
 // Date型のフォーマッター
 import { dateToString } from '../utils';
@@ -26,6 +27,33 @@ import { dateToString } from '../utils';
 export default function MemoList(props) {
   const { memos } = props;
   const navigation = useNavigation();
+
+  const deleteMemo = (id) => {
+    const { currentUser } = firebase.auth();
+    if (currentUser) {
+      const db = firebase.firestore();
+      const ref = db.collection(`users/${currentUser.uid}/memos`).doc(id);
+      // 選択肢つきアラートを設定（セオリーとして、ネガティヴオプション、ポジティブオプションの順番で作成する
+      Alert.alert('メモを削除します', 'よろしですか？', [
+        {
+          // ボタンのメッセージ
+          text: 'キャンセル',
+          // ボタンの押下処理
+          onPress: () => {},
+        },
+        {
+          text: '削除する',
+          // ボタンスタイル（destructiveは文字が赤くなる）
+          style: 'destructive',
+          onPress: () => {
+            ref.delete().catch(() => {
+              Alert.alert('削除に失敗しました');
+            });
+          },
+        },
+      ]);
+    }
+  };
 
   // Flatlistに渡すレンダリングコンポーネント
   const renderItem = ({ item }) => (
@@ -47,9 +75,7 @@ export default function MemoList(props) {
       </View>
       <TouchableOpacity
         style={styles.memoDelete}
-        onPress={() => {
-          Alert.alert('マジで消すんやがええのか？');
-        }}
+        onPress={() => deleteMemo(item.id)}
       >
         <Feather name="x" size={22} color="#B0B0B0" />
       </TouchableOpacity>

@@ -11,20 +11,25 @@ import {
 import firebase from 'firebase';
 
 import Button from '../components/Button';
+import Loading from '../components/Loading';
+import { transLateErrors } from '../utils';
 
 export default function LogInScreen(props) {
   const { navigation } = props;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
   // 会員登録処理を外だし
   const handlePress = () => {
+    setLoading(true);
     // ファイアーベースのユーザ作成API
     firebase.auth().createUserWithEmailAndPassword(email, password)
       // ユーザ作成が成功した場合の処理
-      .then((userCredential) => {
-        const { user } = userCredential;
-        console.log(user.uid);
+      .then(() => {
+        // 以下でユーザ情報取得、しようする場合は、thenの引数にuserCredentialを指定
+        // .then((userCredential) => {
+        // const { user } =  userCredential; ....
         navigation.reset({
           index: 0,
           routes: [{ name: 'MemoList' }],
@@ -32,12 +37,17 @@ export default function LogInScreen(props) {
       })
       // ユーザ作成が失敗した場合の処理
       .catch((error) => {
-        Alert.alert(error.code);
+        const errorMsg = transLateErrors(error.code);
+        Alert.alert(errorMsg.title, errorMsg.description);
+      })
+      .then(() => {
+        setLoading(false);
       });
   };
 
   return (
     <View style={styles.container}>
+      <Loading isLoading={isLoading} />
       <View style={styles.inner}>
         <Text style={styles.title}>Sing Up!</Text>
         <TextInput
