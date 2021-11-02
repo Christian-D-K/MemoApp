@@ -27,7 +27,7 @@ export default function MemoListScreen(props) {
     // currentUserが存在しない場合もあるので、条件分岐で担保する
     if (currentUser) {
       // 並び替えを行う（今回は最終更新日） asc = 昇順 desc = 降順
-      const ref = db.collection(`users/${currentUser.uid}/memos`);// .orderBy('updatedAt', 'desc');
+      const ref = db.collection(`users/${currentUser.uid}/memos`).orderBy('updatedAt', 'desc');
       // 接続したコレクションのデータを取得する（snapshot)内に入ってくる
       // コレクションの監視をストップするメソッド（unsubscribeに入ってくる）の取得も忘れずに行う
       unsubscribe = ref.onSnapshot((snapshot) => {
