@@ -5,34 +5,81 @@ import {
   Text,
   StyleSheet,
   Alert,
+  FlatList,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { Feather } from '@expo/vector-icons';
+// memosはオブジェクト配列なので、shapeで受け取り
+// shape内で型を指定するので、stringも定義
+// Date型はinstanceOfというメソッドで型定義する
+import {
+  shape,
+  string,
+  instanceOf,
+  arrayOf,
+} from 'prop-types';
 
-export default function MemoList() {
+export default function MemoList(props) {
+  const { memos } = props;
   const navigation = useNavigation();
-  return (
-    <View>
-      <TouchableOpacity style={styles.memoListItem} onPress={() => { navigation.navigate('MemoDetail'); }}>
-        <View>
-          <Text style={styles.memoListItemTitle}>買い物リスト</Text>
-          <Text style={styles.memoListItemDate}>2020/12/24 10:00</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.memoDelete}
-          onPress={() => {
-            Alert.alert('マジで消すんやがええのか？');
-          }}
+
+  // Flatlistに渡すレンダリングコンポーネント
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.memoListItem}
+      onPress={() => { navigation.navigate('MemoDetail'); }}
+    >
+      <View>
+        <Text
+          style={styles.memoListItemTitle}
+          // 表示する行数指定（これがないとタイトル表示だけでなく、コンテンツも表示される）
+          numberOfLines={1}
         >
-          <Feather name="x" size={22} color="#B0B0B0" />
-        </TouchableOpacity>
+          {item.bodyText}
+        </Text>
+        <Text style={styles.memoListItemDate}>{String(item.updatedAt)}</Text>
+      </View>
+      <TouchableOpacity
+        style={styles.memoDelete}
+        onPress={() => {
+          Alert.alert('マジで消すんやがええのか？');
+        }}
+      >
+        <Feather name="x" size={22} color="#B0B0B0" />
       </TouchableOpacity>
+    </TouchableOpacity>
+  );
+
+  return (
+    // スクロールが発生すると、スクロールバーの左に空白ができる場合があるので、スタイルで余白を詰める
+    <View style={styles.container}>
+      {/* 表示されている部分だけをレンダリングする便利コンポーネント */}
+      <FlatList
+        // Propsから渡ってきたデータを取得する
+        data={memos}
+        // コンポーネントを返す関数を設定
+        renderItem={renderItem}
+        // Mapの場合は、Map内でKeyを設定するが、Flatの場合ここでKeyを設定する
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }
 
+MemoList.propTypes = {
+  memos: arrayOf(shape({
+    id: string,
+    bodyText: string,
+    // Dateの指定は以下の方法
+    updatedAt: instanceOf(Date),
+  })).isRequired,
+};
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   memoListItem: {
     backgroundColor: '#ffffff',
     flexDirection: 'row',

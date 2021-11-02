@@ -26,7 +26,7 @@ export default function MemoCreatecreen(props) {
     // KeyとValueが同じ場合は、一つ書けばいい
     ref.add({
       bodyText,
-      apdatedAt: new Date(),
+      updatedAt: new Date(),
     })
       // 参照先(document)の諸データが「docRefに格納されてくる」
       .then((docRef) => {
